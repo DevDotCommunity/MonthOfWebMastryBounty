@@ -1,0 +1,52 @@
+name: Lint
+
+on:
+  push: null
+  pull_request: null
+
+permissions: { }
+
+jobs:
+  build:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Super-linter
+        id: super-linter
+        uses: super-linter/super-linter@v6.7.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Count failed files
+        if: failure()
+        id: count-failures
+        run: |
+          FAILURES=$(grep -o "ERROR" ${{ steps.super-linter.outputs.LOG_FILE }} | wc -l)
+          echo "failed_files=$FAILURES" >> $GITHUB_ENV
+
+      - name: Comment on pull request
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const failedFiles = process.env.failed_files;
+            const prNumber = context.payload.pull_request.number;
+            github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `Number of files failed linting: ${failedFiles}`
+            });
