@@ -1,1 +1,19 @@
 */Answers
+2) color: #444; <-Missing semi colon
+
+3) </html> <-This line of Code was missing
+
+4) /*Colons was not given
+
+5) <li>Item 2</li> <-This line of code was incomplete
+
+6) File should be css
+  justify-content: center; <-Semi colon was missing*/
+
+7) Can't Find mistake
+
+8) box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); <-Missing semi colon
+
+9) Can't Find mistake
+
+10) margin-bottom: 20px; <-Missing semi colon
